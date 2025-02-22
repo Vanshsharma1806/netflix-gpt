@@ -1,22 +1,26 @@
 import { checkValidData } from "../utils/validate";
 import Header from "./Header";
 import { useRef, useState } from "react";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword,updateProfile } from "firebase/auth";
 import { auth } from "../utils/fireBase";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 const Login = () => {
 
   const [isSignIn, setIsSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
   const navigate = useNavigate();
+  const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
-
+  const dispatch = useDispatch();
 
   const handleClick = () => {
     setIsSignIn(!isSignIn);
   }
+
   const handleBtnClick = () => {
     const msg =checkValidData(email.current.value, password.current.value);
     setErrorMessage(msg);
@@ -28,7 +32,17 @@ const Login = () => {
       .then((userCredential) => {
         // Signed up 
         const user = userCredential.user;
-        navigate("/browse");
+        updateProfile(user, {
+          displayName: name.current.value
+        }).then(() => {
+          const {uid, email, displayName} = auth.currentUser;
+          dispatch(addUser({uid:user.uid, email:user.email, displayName:name.current.value}));
+          navigate("/browse");
+        }).catch((error) => {
+          // An error occurred
+          // ...
+        });
+      
         console.log(user);  
         // ...
       })
@@ -64,7 +78,7 @@ const Login = () => {
 
       <form onSubmit={(e)=>{e.preventDefault()}} className=" bg-black absolute p-12 w-1/3  my-36 mx-auto left-0 right-0 bg-opacity-80 text-white">
         <h1 className="text-3xl  font-bold m-2 mb-4 " >{isSignIn?"Sign In" : "Sign Up"}</h1>
-        {!isSignIn && <input type="Name" placeholder="Full Name" className="p-4  bg-gray-950 border border-gray-400 rounded-lg m-2 my-2 w-full"></input>}
+        {!isSignIn && <input ref={name} type="Name" placeholder="Full Name" className="p-4  bg-gray-950 border border-gray-400 rounded-lg m-2 my-2 w-full"></input>}
         <input ref={email} type="email" placeholder="Email" className="p-4  bg-gray-950 border border-gray-400 rounded-lg m-2 my-2 w-full"></input>
         <input ref={password} type="password" placeholder="Password" className="p-4 m-2 my-2   bg-gray-950 border border-gray-400 rounded-lg  w-full"></input>
         <p className="text-red-600 m-2 font-bold"> {errorMessage}</p>
