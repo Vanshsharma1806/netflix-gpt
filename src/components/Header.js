@@ -1,14 +1,35 @@
 import { auth } from "../utils/fireBase";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { addUser, removeUser } from "../utils/userSlice";
+import { netflixLogo, profileIcon } from "../utils/constants";
 const Header = () => { 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
+  useEffect(()=>{
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/auth.user
+        const {uid, email, displayName} = user;
+        dispatch(addUser({uid:uid, email:email, displayName:displayName}));
+        navigate("/browse");
+      } else {
+        // User is signed out
+        dispatch(removeUser());
+        navigate("/");
+        // ...
+      }
+    });
+  },[])
+
   const handleSignOut = () => {
     signOut(auth).then(() => {
       // Sign-out successful.
-      navigate("/");
+      
 
     }).catch((error) => {
       // An error happened.
@@ -16,11 +37,11 @@ const Header = () => {
   }
 
   return (
-    <div className="absolute bg-gradient-to-b from-black w-full  p-4 z-10 flex justify-between">
-      <img className="w-48 mx-14   " src="https://cdn.cookielaw.org/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png"></img>
+    <div className="absolute bg-gradient-to-b from-black w-full p-2 z-10 flex justify-between">
+      <img className="h-14 mx-14   " src={netflixLogo}></img>
 
       {user && <div className="mr-4 flex">
-        <img className="h-14 mx-1 " src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg"></img>
+        <img className="h-10 mx-1 " src={profileIcon}></img>
         <button className="text-white font-bold" onClick={handleSignOut}>Sign Out</button>
       </div>}
     </div>

@@ -1,17 +1,16 @@
 import { checkValidData } from "../utils/validate";
 import Header from "./Header";
-import { useRef, useState } from "react";
+import {  useRef, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword,updateProfile } from "firebase/auth";
 import { auth } from "../utils/fireBase";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { bgImage } from "../utils/constants";
 const Login = () => {
 
   const [isSignIn, setIsSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const navigate = useNavigate();
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
@@ -21,10 +20,10 @@ const Login = () => {
     setIsSignIn(!isSignIn);
   }
 
+  
   const handleBtnClick = () => {
     const msg =checkValidData(email.current.value, password.current.value);
     setErrorMessage(msg);
-
     if(msg) return;
 
     if(!isSignIn){
@@ -37,13 +36,10 @@ const Login = () => {
         }).then(() => {
           const {uid, email, displayName} = auth.currentUser;
           dispatch(addUser({uid:user.uid, email:user.email, displayName:name.current.value}));
-          navigate("/browse");
         }).catch((error) => {
           // An error occurred
           // ...
-        });
-      
-        console.log(user);  
+        }); 
         // ...
       })
       .catch((error) => {
@@ -56,7 +52,6 @@ const Login = () => {
       .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
-        navigate("/browse");
         console.log(user);
         // ...
       })
@@ -73,7 +68,7 @@ const Login = () => {
       <Header/>
 
       <div className="absolute ">
-      <img src="https://assets.nflxext.com/ffe/siteui/vlv3/f268d374-734d-474f-ad13-af5ba87ef9fc/web/IN-en-20250210-TRIFECTA-perspective_92338d5d-6ccd-4b1a-8536-eb2b0240a55e_large.jpg"></img>
+      <img src={bgImage}></img>
       </div>
 
       <form onSubmit={(e)=>{e.preventDefault()}} className=" bg-black absolute p-12 w-1/3  my-36 mx-auto left-0 right-0 bg-opacity-80 text-white">
