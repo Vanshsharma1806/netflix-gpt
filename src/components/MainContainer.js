@@ -1,4 +1,4 @@
-import { shallowEqual, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import VideoBackground from "./VideoBackground";
 import VideoTitle from "./VideoTitle";
 
@@ -12,7 +12,7 @@ const MainContainer = ()=>{
     if(!movies ) return ;
     
 
-    const mainMovie = movies[2];
+    const mainMovie = movies[0];
     const {title, id, overview} = mainMovie;
 
     return (

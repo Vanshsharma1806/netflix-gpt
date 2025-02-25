@@ -10,5 +10,7 @@ export const API_OPTIONS =  {
   }
 };
 
+export const IMAGE_CDN = "https://image.tmdb.org/t/p/w500/";
+
 
   
