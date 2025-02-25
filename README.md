@@ -1,5 +1,5 @@
 
-#NetflixGPT
+# NetflixGPT
 
 - Created react app
 - Configure tailwindCSS
