@@ -23,7 +23,8 @@
 - Built secondary Container 
 - Implemented Movie lists 
 - Implemented Movie Cards
-
+- build search button for gpt search options
+- build gptSlice and setup the redux store
 
 
 
